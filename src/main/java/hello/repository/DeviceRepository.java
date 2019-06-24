@@ -1,5 +1,6 @@
 package hello.repository;
 
+import hello.model.Device;
 import hello.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
-    List<User> findByLastName(String lastName);
+public interface DeviceRepository extends CrudRepository<Device, Long> {
+    List<Device> findByName(String name);
 }

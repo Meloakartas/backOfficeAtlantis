@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User - <span th:text="${user.name()}">User Name</span></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
+    <style>
+        #users tr {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<h2>List of users</h2>
+
+<div>User Name : <span th:text="${user.name()}">User Name</span></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            User devices :
+            <table id="user_devices" class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Mac Address</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Device Type</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="device : ${user.userDevices}" >
+                    <td><span th:text="${device.id}">Id</span></td>
+                    <td><span th:text="${device.macAddress}">Mac Address</span></td>
+                    <td><span th:text="${device.name}">Name</span></td>
+                    <td><span th:text="${device.deviceType.name}">Device Type</span></td>
+                    <td><a th:href="@{/addOrRemoveDevice(userId=${user.id}, deviceId=${device.id})}" type="button" class="btn btn-danger">Remove</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            Other devices :
+            <table id="other_devices" class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Mac Address</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Device Type</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="device : ${availableDevices}" >
+                    <td><span th:text="${device.id}">Id</span></td>
+                    <td><span th:text="${device.macAddress}">Mac Address</span></td>
+                    <td><span th:text="${device.name}">Name</span></td>
+                    <td><span th:text="${device.deviceType.name}">Device Type</span></td>
+                    <td><a th:href="@{/addOrRemoveDevice(userId=${user.id}, deviceId=${device.id})}" type="button" class="btn btn-success">Add</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

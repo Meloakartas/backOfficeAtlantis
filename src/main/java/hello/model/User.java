@@ -11,9 +11,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "useradid")
     private Long userADid;
 
+    @Column(name = "firstname")
     private String firstName;
+
+    @Column(name = "lastname")
     private String lastName;
 
     @ManyToMany(cascade = {
@@ -24,7 +28,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "device_id")
     )
-    private List<Device> devices = new ArrayList<>();
+    private List<Device> userDevices = new ArrayList<>();
 
     public User() {
 
@@ -70,13 +74,20 @@ public class User {
         this.lastName = lastName;
     }
 
+    public String name(){
+        return lastName + ' ' + firstName;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(firstName).append(lastName).append('\'');
-        sb.append(", devices=").append(devices);
-        sb.append('}');
-        return sb.toString();
+        return String.format("Customer[id=%d, userADid='%s', firstName='%s', lastName='%s']", id, userADid, firstName, lastName);
+    }
+
+    public List<Device> getUserDevices() {
+        return userDevices;
+    }
+
+    public void setUserDevices(List<Device> userDevices) {
+        this.userDevices = userDevices;
     }
 }
