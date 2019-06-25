@@ -1,6 +1,6 @@
-package hello.repository;
+package backoffice.repository;
 
-import hello.model.User;
+import backoffice.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

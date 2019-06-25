@@ -1,13 +1,11 @@
-package hello.service;
+package backoffice.service;
 
-import hello.model.User;
-import hello.repository.UserRepository;
+import backoffice.model.User;
+import backoffice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {

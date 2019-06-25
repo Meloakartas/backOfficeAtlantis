@@ -1,7 +1,6 @@
-package hello.service;
+package backoffice.service;
 
-import hello.model.Device;
-import hello.model.User;
+import backoffice.model.Device;
 
 import java.util.List;
 

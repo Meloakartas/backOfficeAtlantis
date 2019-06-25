@@ -1,7 +1,7 @@
-package hello.service;
+package backoffice.service;
 
-import hello.model.Device;
-import hello.repository.DeviceRepository;
+import backoffice.model.Device;
+import backoffice.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

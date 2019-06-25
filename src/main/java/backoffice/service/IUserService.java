@@ -1,9 +1,7 @@
-package hello.service;
+package backoffice.service;
 
-import hello.model.User;
-
+import backoffice.model.User;
 import java.util.List;
-import java.util.Optional;
 
 public interface IUserService {
 

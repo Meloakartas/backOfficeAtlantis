@@ -1,9 +1,7 @@
-package hello;
+package backoffice.controller;
 
-import hello.model.Device;
-import hello.model.User;
-import hello.service.IDeviceService;
-import hello.service.IUserService;
+import backoffice.model.Device;
+import backoffice.service.IDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
