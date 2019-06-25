@@ -9,5 +9,7 @@ public interface IUserService {
 
     User findUserById(long id);
 
-    User updateUser(User user);
+    User findUserByADID(String UserADId);
+
+    User saveOrUpdateUser(User user);
 }

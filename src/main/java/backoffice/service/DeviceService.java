@@ -2,7 +2,6 @@ package backoffice.service;
 
 import backoffice.model.Device;
 import backoffice.repository.DeviceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class DeviceService implements IDeviceService {
 
-    @Autowired
-    private DeviceRepository repository;
+    private final DeviceRepository repository;
+
+    public DeviceService(DeviceRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Device> findAll() {
@@ -22,5 +24,10 @@ public class DeviceService implements IDeviceService {
     @Override
     public Device findDeviceById(long id) {
         return repository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public Device updateOrAddDevice(Device device) {
+        return repository.save(device);
     }
 }

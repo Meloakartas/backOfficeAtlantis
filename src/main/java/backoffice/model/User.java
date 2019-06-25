@@ -6,13 +6,13 @@ import java.util.List;
 
 @Entity(name = "User")
 @Table(name = "users")
-public class User {
+public class User implements Comparable<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "useradid")
-    private Long userADid;
+    private String userADid;
 
     @Column(name = "firstname")
     private String firstName;
@@ -34,9 +34,8 @@ public class User {
 
     }
 
-    public User(Long id, Long userADid, String firstName, String lastName)
+    public User(String userADid, String firstName, String lastName)
     {
-        this.id = id;
         this.userADid = userADid;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -50,11 +49,11 @@ public class User {
         this.id = id;
     }
 
-    public Long getUserADid() {
+    public String getUserADid() {
         return userADid;
     }
 
-    public void setUserADid(Long userADid) {
+    public void setUserADid(String userADid) {
         this.userADid = userADid;
     }
 
@@ -89,5 +88,9 @@ public class User {
 
     public void setUserDevices(List<Device> userDevices) {
         this.userDevices = userDevices;
+    }
+
+    public int compareTo(User u) {
+        return this.getId().compareTo(u.getId());
     }
 }

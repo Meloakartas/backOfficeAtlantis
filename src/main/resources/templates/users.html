@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Users</title>
     <meta charset="UTF-8">
@@ -10,31 +10,43 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <style>
-        #users tr {
+        #users tr.user {
             cursor: pointer;
         }
     </style>
 </head>
 
 <body>
-<h2>List of users</h2>
+<nav class="navbar navbar-dark bg-dark justify-content-between">
+    <div class="container">
+        <a class="navbar-brand text-white" href="/">Back Office</a>
+        <div>
+            <a class="btn btn-info" type="button" href="/devices">Devices list</a>
+            <a class="btn btn-secondary" type="button" href="/logout">Sign out</a>
+        </div>
+    </div>
+</nav>
 
-<table id="users" class="table">
-    <thead class="thead-dark">
+<h2 class="text-center">List of users</h2>
+
+<div class="container">
+    <table id="users" class="table table-hover">
+        <thead class="thead-dark">
         <tr>
             <th scope="col">Id</th>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
         </tr>
-    </thead>
-    <tbody>
-    <tr th:each="user : ${users}" >
-        <td><a th:href="@{/user(id=${user.id})}"><span th:text="${user.id}">Id</span></a></td>
-        <td><span th:text="${user.firstName}">First Name</span></td>
-        <td><span th:text="${user.lastName}">Last Name</span></td>
-    </tr>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <tr class="user" th:each="user : ${users}" >
+            <td><a th:href="@{/user(userId=${user.id})}"><span th:text="${user.id}">Id</span></a></td>
+            <td><span th:text="${user.firstName}">First Name</span></td>
+            <td><span th:text="${user.lastName}">Last Name</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 </body>
 
@@ -46,7 +58,6 @@
                 window.location = href;
             }
         });
-
     });
 </script>
 </html>

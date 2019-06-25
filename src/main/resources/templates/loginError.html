@@ -1,63 +1,34 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Devices</title>
+    <title>Home</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <style>
-        #devices tr.device {
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
 </head>
-
 <body>
 <nav class="navbar navbar-dark bg-dark justify-content-between">
     <div class="container">
         <a class="navbar-brand text-white" href="/">Back Office</a>
-        <div>
+        <a th:unless="${userConnected}" class="btn btn-primary" href="/loginUser">Sign In/Sign Up</a>
+        <div th:if="${userConnected}">
             <a class="btn btn-light" type="button" href="/users">Users list</a>
             <a class="btn btn-secondary" type="button" href="/logout">Sign out</a>
         </div>
     </div>
 </nav>
-<h2 class="text-center">List of devices</h2>
 
 <div class="container">
-    <table id="devices" class="table table-hover">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Mac Address</th>
-            <th scope="col">Name</th>
-            <th scope="col">Device Type</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="device" th:each="device : ${devices}" >
-            <td><a th:href="@{/device(deviceId=${device.id})}"><span th:text="${device.id}">Id</span></a></td>
-            <td><span th:text="${device.macAddress}">Mac Address</span></td>
-            <td><span th:text="${device.name}">Name</span></td>
-            <td><span th:text="${device.deviceType.name}">Device Type</span></td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="text-center row align-items-center" style="font-size: 50px; height: 80vh;">
+        <div class="col-12">
+            <div>An error has occurred concerning your session, please <a href="/loginUser">reconnect</a>.</div>
+        </div>
+    </div>
 </div>
 
 </body>
-
-<script >
-    $(document).ready(function() {
-        $('#devices tr').click(function() {
-            var href = $(this).find("a").attr("href");
-            if(href) {
-                window.location = href;
-            }
-        });
-    });
-</script>
 </html>

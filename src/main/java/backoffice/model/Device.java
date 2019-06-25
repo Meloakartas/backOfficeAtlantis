@@ -24,7 +24,7 @@ public class Device {
     private DeviceType deviceType;
 
     @ManyToMany(mappedBy = "userDevices")
-    List<User> users;
+    private List<User> users;
 
     public Device () {
 
@@ -67,5 +67,13 @@ public class Device {
 
     public void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 }

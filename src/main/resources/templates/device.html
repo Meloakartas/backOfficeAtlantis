@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title th:text="'User - ' + ${user.name()}"></title>
+    <title th:text="'Device - ' + ${device.name}"></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -23,53 +23,46 @@
     </div>
 </nav>
 
-<h2 class="text-center">User</h2>
-<h2 th:text="${user.name()}" class="text-center">User Name</h2>
+<h2 class="text-center">Device</h2>
+
+<h2 th:text="${device.name} + ' - ' + ${device.macAddress}" class="text-center">Device Name - Device Mac Address</h2>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <h3>User devices :</h3>
+            <h4>User linked to the device:</h4>
             <table id="user_devices" class="table table-hover">
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">Id</th>
-                    <th scope="col">Mac Address</th>
                     <th scope="col">Name</th>
-                    <th scope="col">Device Type</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="device : ${user.userDevices}" >
-                    <td><span th:text="${device.id}">Id</span></td>
-                    <td><span th:text="${device.macAddress}">Mac Address</span></td>
-                    <td><span th:text="${device.name}">Name</span></td>
-                    <td><span th:text="${device.deviceType.name}">Device Type</span></td>
-                    <td><a th:href="@{/addOrRemoveDevice(userId=${user.id}, deviceId=${device.id})}" type="button" class="btn btn-danger">Remove</a></td>
+                <tr th:each="user : ${device.users}" >
+                    <td><span th:text="${user.id}">Id</span></td>
+                    <td><span th:text="${user.name()}">Name</span></td>
+                    <td><a th:href="@{/addOrRemoveUser(deviceId=${device.id}, userId=${user.id})}" type="button" class="btn btn-danger">Remove</a></td>
                 </tr>
                 </tbody>
             </table>
         </div>
         <div class="col">
-            <h3>Available devices :</h3>
+            <h4>Other users :</h4>
             <table id="other_devices" class="table table-hover">
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">Id</th>
-                    <th scope="col">Mac Address</th>
                     <th scope="col">Name</th>
-                    <th scope="col">Device Type</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="device : ${availableDevices}" >
-                    <td><span th:text="${device.id}">Id</span></td>
-                    <td><span th:text="${device.macAddress}">Mac Address</span></td>
-                    <td><span th:text="${device.name}">Name</span></td>
-                    <td><span th:text="${device.deviceType.name}">Device Type</span></td>
-                    <td><a th:href="@{/addOrRemoveDevice(userId=${user.id}, deviceId=${device.id})}" type="button" class="btn btn-success">Add</a></td>
+                <tr th:each="user : ${availableUsers}" >
+                    <td><span th:text="${user.id}">Id</span></td>
+                    <td><span th:text="${user.name()}">Name</span></td>
+                    <td><a th:href="@{/addOrRemoveUser(deviceId=${device.id}, userId=${user.id})}" type="button" class="btn btn-success">Add</a></td>
                 </tr>
                 </tbody>
             </table>
