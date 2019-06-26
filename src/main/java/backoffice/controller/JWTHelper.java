@@ -1,17 +1,33 @@
 package backoffice.controller;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import java.util.Date;
-import java.util.List;
+import javafx.util.Pair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
+import java.util.Objects;
 
 class JWTHelper {
 
     static boolean isUserAuthenticated(String id_token)
     {
-        DecodedJWT jwt = id_token != null ? JWTHelper.ParseJWT(id_token) : null;
-        return jwt != null && JWTHelper.CheckAuthTokenValidity(jwt);
+        return (id_token != null ? IsTokenValid(id_token) : null) != null;
     }
 
     static DecodedJWT ParseJWT(String id_token)
@@ -23,68 +39,99 @@ class JWTHelper {
         }
     }
 
-    private static boolean CheckAuthTokenValidity(DecodedJWT jwt)
-    {
-        return audienceMatch(jwt.getAudience()) && issuerMatch(jwt.getIssuer()) && validDates(jwt.getExpiresAt(), jwt.getNotBefore());
+    private static RSAPublicKey getPublicKeyUsingModulusAndExponent(BigInteger modulus, BigInteger exponent) {
+        try {
+            return (RSAPublicKey) KeyFactory.getInstance("RSA")
+                    .generatePublic(new RSAPublicKeySpec(modulus, exponent));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    private static boolean audienceMatch(List<String> audience)
-    {
-        //System.out.println("Audience : " + audience.get(0));
-        return audience.get(0).equals("27fb84fe-4baf-4b6b-bfe7-f2d0638f2790");
+    private static RSAPrivateKey getPrivateKeyUsingModulusAndExponent(BigInteger modulus, BigInteger exponent) {
+        try {
+            return (RSAPrivateKey) KeyFactory.getInstance("RSA")
+                    .generatePrivate(new RSAPrivateKeySpec(modulus, exponent));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    private static boolean issuerMatch(String issuer)
+    private static DecodedJWT IsTokenValid(String id_token)
     {
-        //System.out.println("Issuer : " + issuer );
-        return issuer.equals("https://atlantisproject.b2clogin.com/41dd4f0b-7a80-473f-82fa-d518398d6a7f/v2.0/");
+        DecodedJWT jwt = ParseJWT(id_token);
+        Pair modulusExponent = null;
+
+        try {
+            modulusExponent = GetModulusAndExponent(Objects.requireNonNull(jwt).getKeyId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(modulusExponent == null)
+            return null;
+
+        BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(modulusExponent.getKey().toString()));
+        BigInteger publicExponent = new BigInteger(1, Base64.getUrlDecoder().decode(modulusExponent.getValue().toString()));
+
+        RSAPublicKey publicKey;//Get the key instance
+
+        publicKey = getPublicKeyUsingModulusAndExponent(modulus, publicExponent);
+
+        if(publicKey == null)
+            return null;
+
+        RSAPrivateKey privateKey;//Get the key instance
+
+        privateKey = getPrivateKeyUsingModulusAndExponent(modulus, publicExponent);
+
+        if(privateKey == null)
+            return null;
+
+        try {
+            Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("https://atlantisproject.b2clogin.com/41dd4f0b-7a80-473f-82fa-d518398d6a7f/v2.0/")
+                    .withAudience("27fb84fe-4baf-4b6b-bfe7-f2d0638f2790")
+                .build(); //Reusable verifier instance
+            return verifier.verify(id_token);
+        } catch (JWTVerificationException exception){
+
+            System.out.println(exception.getMessage());
+            return null;
+        }
     }
 
-    private static boolean validDates(Date expireDate, Date notBeforeDate)
-    {
-        //System.out.println("Expire Date : " + expireDate + " / Not Before Date : " + notBeforeDate + " / Current Date : " + new Date());
-        return notBeforeDate.compareTo(new Date()) < 0 && expireDate.compareTo(new Date()) > 0;
-    }
+    private static Pair GetModulusAndExponent(String kid) throws Exception {
+        URL obj = new URL("https://atlantisproject.b2clogin.com/atlantisproject.onmicrosoft.com/discovery/v2.0/keys?p=b2c_1_signuporsignin");
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestMethod("GET");
 
-    private static void GenerateKeys()
-    {
-//        final RSAPrivateKey privateKey = null; //Get the key instance
-//        final String privateKeyId = ""; //Create an Id for the above key;
-//
-//        RSAKeyProvider keyProvider = new RSAKeyProvider() {
-//            @Override
-//            public RSAPublicKey getPublicKeyById(String kid) {
-//                //Received 'kid' value might be null if it wasn't defined in the Token's header
-//                RSAPublicKey publicKey = jwkStore.get(kid);
-//                return (RSAPublicKey) publicKey;
-//            }
-//
-//            @Override
-//            public RSAPrivateKey getPrivateKey() {
-//                return privateKey;
-//            }
-//
-//            @Override
-//            public String getPrivateKeyId() {
-//                return privateKeyId;
-//            }
-//        };
-//
-//        Algorithm algorithm = Algorithm.RSA256(keyProvider);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
 
-        //Check Public with Kid : https://blogs.aaddevsup.xyz/2019/03/using-jwt-io-to-verify-the-signature-of-a-jwt-token/
+        String modulus = null;
+        String exponent = null;
 
-//        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE";
-//        RSAPublicKey publicKey = null;//Get the key instance
-//        RSAPrivateKey privateKey = null;//Get the key instance
-//        try {
-//            Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
-//            JWTVerifier verifier = JWT.require(algorithm)
-//                    .withIssuer("auth0")
-//                    .build(); //Reusable verifier instance
-//            DecodedJWT jwt = verifier.verify(token);
-//        } catch (JWTVerificationException exception){
-//            //Invalid signature/claims
-//        }
+        JSONObject myResponse = new JSONObject(response.toString());
+        JSONArray keys = (JSONArray) myResponse.get("keys");
+
+        for(int i =0; i<keys.length(); i++)
+        {
+            JSONObject object = (JSONObject) keys.get(i);
+            if(object.get("kid").toString().equals(kid))
+            {
+                modulus = object.get("n").toString();
+                exponent = object.get("e").toString();
+            }
+        }
+
+        return new Pair(modulus, exponent);
     }
 }

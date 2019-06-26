@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity(name = "User")
 @Table(name = "users")
-public class User implements Comparable<User> {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -88,9 +88,5 @@ public class User implements Comparable<User> {
 
     public void setUserDevices(List<Device> userDevices) {
         this.userDevices = userDevices;
-    }
-
-    public int compareTo(User u) {
-        return this.getId().compareTo(u.getId());
     }
 }
