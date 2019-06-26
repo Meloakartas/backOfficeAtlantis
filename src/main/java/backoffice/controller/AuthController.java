@@ -27,19 +27,27 @@ public class AuthController {
     }
 
     @RequestMapping("/login")
-    public RedirectView login(@RequestParam(name = "id_token") String id_token, HttpServletResponse response)
+    public ModelAndView login(@RequestParam(name = "id_token") String id_token, HttpServletResponse response)
     {
+        if(JWTHelper.isUserAuthenticated(id_token) && JWTHelper.ParseJWT(id_token).getClaims().get("family_name").asString().equals("Heck"))
+        {
+            Cookie cookie = new Cookie("id_token", id_token);
+            System.out.println(id_token);
+            response.addCookie(cookie);
+
+            return new ModelAndView("login");
+        }
         if(JWTHelper.isUserAuthenticated(id_token))
         {
             Cookie cookie = new Cookie("id_token", id_token);
             System.out.println(id_token);
             response.addCookie(cookie);
 
-            return new RedirectView("/");
+            return new ModelAndView("redirect:/");
         }
         else
         {
-            return new RedirectView("/loginError");
+            return new ModelAndView("redirect:/loginError");
         }
     }
 

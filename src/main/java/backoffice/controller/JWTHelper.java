@@ -1,12 +1,12 @@
 package backoffice.controller;
 
+import backoffice.model.Key;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -60,7 +60,7 @@ class JWTHelper {
     private static DecodedJWT IsTokenValid(String id_token)
     {
         DecodedJWT jwt = ParseJWT(id_token);
-        Pair modulusExponent = null;
+        Key modulusExponent = null;
 
         try {
             modulusExponent = GetModulusAndExponent(Objects.requireNonNull(jwt).getKeyId());
@@ -71,8 +71,8 @@ class JWTHelper {
         if(modulusExponent == null)
             return null;
 
-        BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(modulusExponent.getKey().toString()));
-        BigInteger publicExponent = new BigInteger(1, Base64.getUrlDecoder().decode(modulusExponent.getValue().toString()));
+        BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(modulusExponent.getModulus()));
+        BigInteger publicExponent = new BigInteger(1, Base64.getUrlDecoder().decode(modulusExponent.getExponent()));
 
         RSAPublicKey publicKey;//Get the key instance
 
@@ -102,7 +102,7 @@ class JWTHelper {
         }
     }
 
-    private static Pair GetModulusAndExponent(String kid) throws Exception {
+    private static Key GetModulusAndExponent(String kid) throws Exception {
         URL obj = new URL("https://atlantisproject.b2clogin.com/atlantisproject.onmicrosoft.com/discovery/v2.0/keys?p=b2c_1_signuporsignin");
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
@@ -132,6 +132,6 @@ class JWTHelper {
             }
         }
 
-        return new Pair(modulus, exponent);
+        return new Key(modulus, exponent);
     }
 }
