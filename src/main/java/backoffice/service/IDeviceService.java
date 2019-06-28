@@ -1,7 +1,6 @@
 package backoffice.service;
 
 import backoffice.model.Device;
-import backoffice.model.User;
 
 import java.util.List;
 

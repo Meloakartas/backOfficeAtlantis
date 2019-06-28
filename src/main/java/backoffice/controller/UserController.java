@@ -17,16 +17,19 @@ public class UserController {
 
     private final IUserService userService;
 
+    private final IJWTHelper jwthelper;
+
     private final IDeviceService deviceService;
 
-    public UserController(IUserService userService, IDeviceService deviceService) {
+    public UserController(IUserService userService, IJWTHelper jwthelper, IDeviceService deviceService) {
         this.userService = userService;
+        this.jwthelper = jwthelper;
         this.deviceService = deviceService;
     }
 
     @GetMapping("/users")
-    public ModelAndView users(@CookieValue(value = "id_token", required = false) String id_token, Model model) {
-        if(JWTHelper.isUserAuthenticated(id_token))
+    public ModelAndView users(@CookieValue(value = "id_token") String id_token, Model model) {
+        if(jwthelper.isUserAuthenticated(id_token))
         {
             List<User> users = userService.findAll();
             model.addAttribute("users", users);
@@ -41,8 +44,8 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ModelAndView user(@CookieValue(value = "id_token", required = false) String id_token, @RequestParam(value="userId", defaultValue="0") long userId, Model model) {
-        if(JWTHelper.isUserAuthenticated(id_token))
+    public ModelAndView user(@CookieValue(value = "id_token") String id_token, @RequestParam(value="userId", defaultValue="0") long userId, Model model) {
+        if(jwthelper.isUserAuthenticated(id_token))
         {
             User user = userService.findUserById(userId);
             List<Device> availableDevices = deviceService.findAll();
@@ -61,8 +64,8 @@ public class UserController {
     }
 
     @GetMapping("/addOrRemoveDevice")
-    public ModelAndView addDevice(@CookieValue(value = "id_token", required = false) String id_token, @RequestParam(value="userId", defaultValue="0") long userId, @RequestParam(value="deviceId", defaultValue="0") long deviceId, Model model) {
-        if(JWTHelper.isUserAuthenticated(id_token))
+    public ModelAndView addDevice(@CookieValue(value = "id_token") String id_token, @RequestParam(value="userId", defaultValue="0") long userId, @RequestParam(value="deviceId", defaultValue="0") long deviceId, Model model) {
+        if(jwthelper.isUserAuthenticated(id_token))
         {
             User user = userService.findUserById(userId);
             Device device = deviceService.findDeviceById(deviceId);

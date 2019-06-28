@@ -21,14 +21,17 @@ public class DeviceController {
 
     private final IUserService userService;
 
-    public DeviceController(IDeviceService deviceService, IUserService userService) {
+    private final IJWTHelper jwthelper;
+
+    public DeviceController(IDeviceService deviceService, IUserService userService, IJWTHelper jwthelper) {
         this.deviceService = deviceService;
         this.userService = userService;
+        this.jwthelper = jwthelper;
     }
 
     @GetMapping("/devices")
-    public ModelAndView devices(@CookieValue(value = "id_token", required = false) String id_token, Model model) {
-        if(JWTHelper.isUserAuthenticated(id_token))
+    public ModelAndView devices(@CookieValue(value = "id_token") String id_token, Model model) {
+        if(jwthelper.isUserAuthenticated(id_token))
         {
             List<Device> devices = deviceService.findAll();
 
@@ -43,8 +46,8 @@ public class DeviceController {
     }
 
     @GetMapping("/device")
-    public ModelAndView device(@CookieValue(value = "id_token", required = false) String id_token, @RequestParam(value="deviceId", defaultValue="0") long deviceId, Model model) {
-        if(JWTHelper.isUserAuthenticated(id_token))
+    public ModelAndView device(@CookieValue(value = "id_token") String id_token, @RequestParam(value="deviceId", defaultValue="0") long deviceId, Model model) {
+        if(jwthelper.isUserAuthenticated(id_token))
         {
             Device device = deviceService.findDeviceById(deviceId);
             List<User> availableUsers = userService.findAll();
@@ -63,8 +66,8 @@ public class DeviceController {
     }
 
     @GetMapping("/addOrRemoveUser")
-    public ModelAndView addOrRemoveUser(@CookieValue(value = "id_token", required = false) String id_token, @RequestParam(value="deviceId", defaultValue="0") long deviceId, @RequestParam(value="userId", defaultValue="0") long userId, Model model) {
-        if(JWTHelper.isUserAuthenticated(id_token))
+    public ModelAndView addOrRemoveUser(@CookieValue(value = "id_token") String id_token, @RequestParam(value="deviceId", defaultValue="0") long deviceId, @RequestParam(value="userId", defaultValue="0") long userId, Model model) {
+        if(jwthelper.isUserAuthenticated(id_token))
         {
             User user = userService.findUserById(userId);
             Device device = deviceService.findDeviceById(deviceId);
